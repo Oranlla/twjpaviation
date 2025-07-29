@@ -7,13 +7,81 @@
     <title>tw_aviation_jp</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-    <h1>東京</h1>
-    <p>這是一個簡單的 HTML 範例，包含一個表格。</p>
+</body>
+<body>
+    <header>
+        <h1>
+            <a href="index.html" style="text-decoration:none; color:inherit;">台灣日本航班整理</a>
+        </h1>
+            <p>順便練習html</p>
+    </header>
+    <nav>
+        <a href="tokyo.html" class="active">東京</a>
+        <a href="namba.html">大阪</a>
+        <a href="fukuoka.html">福岡</a>
+    </nav>
+<main>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">Google Sheets 轉換表格</h2>
+<p style="text-align:center;">此表格內容自動從 Google 試算表載入</p>
+
+<table id="data-table"></table>
+
+<script>
+const sheetUrl = "https://docs.google.com/spreadsheets/d/1pSbXeI9yJpQRu-oKxlk_n50XPlGtqQw-CyvSsaX0RkE/export?format=csv";
+
+fetch(sheetUrl)
+    .then(response => response.text())
+    .then(data => {
+        const rows = data.split("\n");
+        let html = "";
+
+        rows.forEach((row, index) => {
+            const cols = row.split(",");
+            html += "<tr>";
+            cols.forEach(col => {
+                html += (index === 0)
+                    ? `<th>${col}</th>` 
+                    : `<td>${col}</td>`;
+            });
+            html += "</tr>";
+        });
+
+        document.getElementById("data-table").innerHTML = html;
+    })
+    .catch(error => console.error("讀取失敗:", error));
+</script>
+
 
     <!-- 範例表格 -->
-    <table border="1">
+    <!-- <table border="1">
         <tr>
             <th>標題 1</th>
             <th>標題 2</th>
@@ -29,8 +97,11 @@
             <td>資料 5</td>
             <td>資料 6</td>
         </tr>
-    </table>
-
+    </table> -->
+    </main>
+    <footer>
+        <p>&copy; 2025 psfang | GitHub Pages</p>
+    </footer>
 </body>
 </html>
 
