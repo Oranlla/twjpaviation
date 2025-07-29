@@ -1,49 +1,126 @@
+/* ===========================
+   網頁全域設定
+   =========================== */
 body {
-    font-family: "Microsoft JhengHei", sans-serif;
-    background-color: #f9f9f9;
-    margin: 0;
-    padding: 0;
-    line-height: 1.6;
+    font-family: "Microsoft JhengHei", sans-serif; /* 設定網頁字體 */
+    background-color: #f9f9f9; /* 頁面背景色 */
+    margin: 0; /* 預設外邊距 */
+    padding: 0; /* 預設內邊距 */
+    line-height: 1.6; /* 設定文字行距 */
 }
+/* ===========================
+   頁首區域 (Header)
+   =========================== */
+
 header {
     background-color: #333;
     color: white;
-    text-align: center;
-    padding: 20px;
+    text-align: center; /* 內容置中 */
+    padding: 20px; /* 內邊距 */
 }
+/* ===========================
+   導航列 (Navigation bar)
+   =========================== */
 nav {
     background-color: #444;
-    display: flex;
-    justify-content: center;
+    display: flex; /* 使用 Flexbox 排版 */
+    justify-content: center; /* 導航選單置中 */
 }
+/* 導航連結樣式 */
 nav a {
     color: white;
-    padding: 14px 20px;
-    text-decoration: none;
+    padding: 14px 20px; /* 內邊距增加點擊範圍 */
+    text-decoration: none; /* 移除底線 */
 }
+
+/* 滑鼠懸停在導航連結時變色 */
 nav a:hover {
     background-color: #666;
 }
-/*導航欄當前頁面變化*/
+/* ===========================
+   導航欄當前頁面樣式
+   =========================== */
 nav a.active {
             background-color: #b44d32; 
             color: white;
             font-weight: bold;        
 }
-
+/* ===========================
+   主要內容區域 (Main Content)
+   =========================== */
 main {
-    width: 90%;
-    max-width: 800px;
-    margin: 20px auto;
+    width: 95%; /* 頁面寬度 */
+    max-width: 900px; /* 最大寬度限制 */
+    margin: 20px auto; /* 上下留白，左右自動置中 */
     background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 20px; /* 內容內邊距 */
+    border-radius: 5px; /* 圓角邊框 */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* 陰影效果 */
 }
+/* ===========================
+   頁尾區域 (Footer)
+   =========================== */
 footer {
-    text-align: center;
-    padding: 15px;
+    text-align: center; /* 文字置中 */
+    padding: 15px; /* 內邊距 */
     background-color: #333;
     color: white;
-    margin-top: 20px;
+    margin-top: 20px; /* 與主內容之距離 */
+}
+
+/* ===========================
+   表格區域 (Table)
+   =========================== */
+table {
+    border-collapse: collapse; /* 表格邊框樣式 */
+    width: 100%; /* 表格寬度 */
+    margin: 10px auto; /* 上下留白，左右自動置中 */
+    text-align: center; /* 表格內容文字置中對齊 */
+}
+/* 設定表頭 (th) 與資料格 (td) 的邊框和內距 */
+th, td {
+    border: 1px solid #999;
+    padding: 8px;
+}
+th {
+    background-color: #f2f2f2;
+}
+/* 滑鼠移到表格列時改變背景色 */
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* ===========================
+   按鈕區域 (Button)
+   =========================== */
+.btn-container {
+    margin: 10px;
+}
+button {
+    margin: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid #b44d32;
+    background-color: #fff;
+    color: #b44d32;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+button.active {
+    background-color: #b44d32;
+    color: white;
+    font-weight: bold;
+}
+/* ===========================
+   搜尋欄 (Search box)
+   =========================== */
+.search-box {
+    display: block; /* 讓輸入框成為區塊元素，獨占一行，方便置中 */
+    margin: 10px auto; /* 上下留白，左右自動置中 */
+    padding: 10px;  /* 輸入框內部文字與邊框的間距 */
+    width: 50%; /* 寬度設定為父容器的50% */
+    font-size: 14px; /* 輸入框內文字大小 */
+    border: 1px solid #999; /* 修改外框顏色 (藍色) */
+    border-radius: 4px; /* (可選) 圓角外框 */
 }

@@ -9,9 +9,6 @@
 </head>
 
 <body>
-
-</body>
-<body>
     <header>
         <h1>
             <a href="index.html" style="text-decoration:none; color:inherit;">台灣日本航班整理</a>
@@ -23,81 +20,127 @@
         <a href="namba.html">大阪</a>
         <a href="fukuoka.html">福岡</a>
     </nav>
-<main>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 80%;
-            margin: 20px auto;
-            text-align: center;
-        }
-        th, td {
-            border: 1px solid #999;
-            padding: 8px;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tr:hover {
-            background-color: #f9f9f9;
-        }
-    </style>
-</head>
-<body>
-
-<h2 style="text-align:center;">Google Sheets 轉換表格</h2>
-<p style="text-align:center;">此表格內容自動從 Google 試算表載入</p>
-
-<table id="data-table"></table>
-
-<script>
-const sheetUrl = "https://docs.google.com/spreadsheets/d/1pSbXeI9yJpQRu-oKxlk_n50XPlGtqQw-CyvSsaX0RkE/export?format=csv";
-
-fetch(sheetUrl)
-    .then(response => response.text())
-    .then(data => {
-        const rows = data.split("\n");
-        let html = "";
-
-        rows.forEach((row, index) => {
-            const cols = row.split(",");
-            html += "<tr>";
-            cols.forEach(col => {
-                html += (index === 0)
-                    ? `<th>${col}</th>` 
-                    : `<td>${col}</td>`;
-            });
-            html += "</tr>";
+    <main>        
+    <h2 style="text-align:center;">Google Sheets 動態表格</h2>
+    <div id="sheetButtons"></div>
+    <!--搜尋欄-->
+    <input type="text" id="searchInput" class="search-box" placeholder="輸入關鍵字..." onkeyup="filterTable()">
+    <!--表格-->
+    <table id="tokyo-data-table"></table> 
+        <script>
+        /* 表格參數*/
+        const SHEET_ID = "1pSbXeI9yJpQRu-oKxlk_n50XPlGtqQw-CyvSsaX0RkE";
+        const sheets = [
+            { name: "東京", label: "去程" },
+            { name: "東京回", label: "返程" }
+        ];
+        /* 取得 HTML 中 id 為 "sheetButtons" 的容器，用來放所有分頁切換按鈕*/
+        const btnContainer = document.getElementById("sheetButtons");
+        /* 遍歷 sheets 陣列，每個元素代表一個 Google Sheets 分頁設定 */
+        sheets.forEach((sheet, index) => {
+            const btn = document.createElement("button"); /* 動態建立button元素 */
+            btn.textContent = sheet.label; /* 使用label屬性 */
+            btn.onclick = () => loadSheet(index); /* 被點擊時，呼叫 loadSheet() 載入對應的分頁資料 */
+            if (index === 0) btn.classList.add("active");
+            btnContainer.appendChild(btn);
         });
+        window.onload = function () {
+        loadSheet(0);
+        };
 
-        document.getElementById("data-table").innerHTML = html;
-    })
-    .catch(error => console.error("讀取失敗:", error));
-</script>
+        /* CSV 解析函式 (可處理引號與多行換行) */
+        function parseCSV(str) {
+            const rows = [];
+            let row = [];
+            let cell = '';
+            let inQuotes = false;
 
+            for (let i = 0; i < str.length; i++) {
+                const char = str[i];
+                const nextChar = str[i+1];
 
-    <!-- 範例表格 -->
-    <!-- <table border="1">
-        <tr>
-            <th>標題 1</th>
-            <th>標題 2</th>
-            <th>標題 3</th>
-        </tr>
-        <tr>
-            <td>資料 1</td>
-            <td>資料 2</td>
-            <td>資料 3</td>
-        </tr>
-        <tr>
-            <td>資料 4</td>
-            <td>資料 5</td>
-            <td>資料 6</td>
-        </tr>
-    </table> -->
+                if (char === '"' && inQuotes && nextChar === '"') {
+                    // 轉義雙引號
+                    cell += '"';
+                    i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    row.push(cell);
+                    cell = '';
+                } else if (char === '\n' && !inQuotes) {
+                    row.push(cell);
+                    rows.push(row);
+                    row = [];
+                    cell = '';
+                } else {
+                    cell += char;
+                }
+            }
+            // 加入最後一格
+            if (cell || row.length > 0) {
+                row.push(cell);
+                rows.push(row);
+            }
+            return rows;
+        }
+        function loadSheet(index) {
+            document.querySelectorAll("#sheetButtons button").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll("#sheetButtons button")[index].classList.add("active");
+
+            const sheetName = sheets[index].name;
+            const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+        fetch(sheetUrl)
+            .then(response => response.text())
+            .then(data => {
+                const rows = parseCSV(data);
+
+                let maxCols = 0;
+                if (rows.length > 0) {
+                    maxCols = rows[0].filter(cell => cell.trim() !== "").length;
+                }
+
+                // 生成表格
+                let html = "";
+                rows.forEach((cols, index) => {
+                    if (cols.length > maxCols) {
+                        cols = cols.slice(0, maxCols);
+                    }
+                    while (cols.length < maxCols) cols.push(""); // 補空白
+                    html += "<tr>";
+                    cols.forEach(col => {
+                        let cell = col.replace(/\r?\n/g, "<br>");
+                        html += (index === 0)
+                            ? `<th>${cell}</th>`
+                            : `<td>${cell}</td>`;
+                    });
+                    html += "</tr>";
+                });
+                document.getElementById("tokyo-data-table").innerHTML = html;
+            })
+            .catch(error => console.error("讀取失敗:", error));
+        }
+
+        /* 搜尋功能 */
+        function filterTable() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const table = document.getElementById("tokyo-data-table");
+            const tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) { // 跳過表頭
+                const cells = tr[i].getElementsByTagName("td");
+                let found = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j] && cells[j].innerText.toLowerCase().includes(input)) {
+                        found = true;
+                        break;
+                    }
+                }
+                tr[i].style.display = found ? "" : "none";
+            }
+        }
+        </script>
     </main>
     <footer>
         <p>&copy; 2025 psfang | GitHub Pages</p>
