@@ -1,8 +1,77 @@
----
-layout: home
-title: "首頁"
----
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="這是一個使用 Jekyll 建立的網站">
+    <title>我的網站</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 內嵌基本樣式，可改為 style.css */
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        nav {
+            background-color: #444;
+            display: flex;
+            justify-content: center;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            background-color: #666;
+        }
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>我的網站</h1>
+        <p>這是一個使用 Jekyll 與 GitHub Pages 建立的網站</p>
+    </header>
 
-# 歡迎來到我的網站
+    <nav>
+        <a href="/">首頁</a>
+        <a href="/blog">文章</a>
+        <a href="/about">關於我</a>
+    </nav>
 
-這是一個用 **Jekyll** 建立的簡單網站，未來可以放置你的文章與作品集。
+    <div class="container">
+        <h2>歡迎來到我的網站！</h2>
+        <p>這是一個示範頁面，你可以在這裡放置你的內容、作品集或部落格文章。</p>
+        <p>未來，你可以建立更多 HTML 或 Markdown 檔案，並連結到這個首頁。</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 我的網站 | 建立於 Jekyll & GitHub Pages</p>
+    </footer>
+</body>
+</html>
