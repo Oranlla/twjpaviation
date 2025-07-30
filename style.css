@@ -13,7 +13,7 @@ body {
    =========================== */
 
 header {
-    background-color: #333;
+    background-color: #b44d32;
     color: white;
     text-align: center; /* 內容置中 */
     padding: 20px; /* 內邊距 */
@@ -22,7 +22,7 @@ header {
    導航列 (Navigation bar)
    =========================== */
 nav {
-    background-color: #444;
+    background-color: #333;
     display: flex; /* 使用 Flexbox 排版 */
     justify-content: center; /* 導航選單置中 */
 }
@@ -41,7 +41,7 @@ nav a:hover {
    導航欄當前頁面樣式
    =========================== */
 nav a.active {
-            background-color: #b44d32; 
+            background-color: #171614; 
             color: white;
             font-weight: bold;        
 }
@@ -76,6 +76,7 @@ table {
     width: 100%; /* 表格寬度 */
     margin: 10px auto; /* 上下留白，左右自動置中 */
     text-align: center; /* 表格內容文字置中對齊 */
+    min-width: 600px;  /* 表格最小寬度 = 600px */
 }
 /* 設定表頭 (th) 與資料格 (td) 的邊框和內距 */
 th, td {
@@ -83,11 +84,17 @@ th, td {
     padding: 8px;
 }
 th {
-    background-color: #f2f2f2;
+    background-color: #c75d43;
+    color: white;
 }
 /* 滑鼠移到表格列時改變背景色 */
 tr:hover {
     background-color: #f9f9f9;
+}
+/* 表格容器 */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* 超出畫面可橫向捲動 */
 }
 
 /* ===========================
@@ -123,4 +130,16 @@ button.active {
     font-size: 14px; /* 輸入框內文字大小 */
     border: 1px solid #999; /* 修改外框顏色 (藍色) */
     border-radius: 4px; /* (可選) 圓角外框 */
+}
+
+/* ===========================
+   裝置媒介 (Media)
+   =========================== */
+@media (max-width: 768px) {
+    table {
+        font-size: 12px;
+    }
+    th, td {
+        padding: 4px;
+    }
 }
