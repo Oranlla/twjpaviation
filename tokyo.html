@@ -33,9 +33,12 @@
         <table id="tokyo-data-table"></table>
     </div>
         <script>
+        /* ===========================
+            導入json檔的部分
+            ============================ */
             const sheets = [
-            { name: "json/flight_tokyo250731.json", label: "去程" },
-            { name: "json/flight_tokyoback250731.json", label: "返程" }
+            { name: "json/flight_tokyo.json", label: "去程" },
+            { name: "json/flight_tokyoback.json", label: "返程" }
         ];
 
         /* 取得 HTML 中 id 為 "sheetButtons" 的物件，用來放所有分頁切換按鈕 */
