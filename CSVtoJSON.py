@@ -78,16 +78,13 @@ with open(jsonfile, mode="w", encoding="utf-8") as f:
 
 
 # In[ ]:
-
+print("Job is done")
 
 
 
 
 # In[6]:
 
-
-df = pd.read_json(jsonfile, encoding="utf-8")
-print(df)
 
 
 # In[ ]:

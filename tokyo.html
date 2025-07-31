@@ -22,7 +22,8 @@
     </nav>
 
     <main>        
-    <h2 style="text-align:center;">Google Sheets 動態表格</h2>
+    <h2 style="text-align:center;">東京往返航班</h2>
+    <p style="text-align:center;">更新日期：2025.07</p>
     <!--切換按鈕元素，div是把區域框起來的元素-->
     <div id="sheetButtons"></div>
     <!--搜尋欄，onkeyup表示釋放按鈕後的事件-->
@@ -32,12 +33,11 @@
         <table id="tokyo-data-table"></table>
     </div>
         <script>
-        /* 表格參數*/
-        const SHEET_ID = "1pSbXeI9yJpQRu-oKxlk_n50XPlGtqQw-CyvSsaX0RkE";
-        const sheets = [
-            { name: "東京", label: "去程" }, /* name: 表格名, label: 按鈕呈現名*/
-            { name: "東京回", label: "返程" }
+            const sheets = [
+            { name: "json/flight_tokyo250731.json", label: "去程" },
+            { name: "json/flight_tokyoback250731.json", label: "返程" }
         ];
+
         /* 取得 HTML 中 id 為 "sheetButtons" 的物件，用來放所有分頁切換按鈕 */
         /* getElementById()是取得HTML元素並轉成JavaScript樹狀物件 */
         const btnContainer = document.getElementById("sheetButtons");
@@ -53,100 +53,53 @@
         loadSheet(0); /* 預設載入第0個分頁資料 */
         };
 
-        /* 自訂CSV解析函式 (處理雙引號與多行換行) */
-        function parseCSV(str) {
-            const rows = []; /* 資料陣列 */
-            let row = []; /* 暫存正在處理的列 */
-            let cell = ''; /* 暫存正在處理的儲存格 */
-            let inQuotes = false; /* 判斷是否在引號內 */
+            /* 
+            函式名稱: loadSheet
+            功能: 依據選擇的分頁 index，載入對應的 Google Sheets 資料
+            過程:
+            1. 切換按鈕樣式 (active)
+            2. 產生對應的 Google Sheets CSV 下載網址
+            3. 使用 fetch() 抓取資料
+            4. 使用 parseCSV() 將文字轉換為陣列
+            5. 生成表格 HTML 並插入網頁
+            */
 
-            for (let i = 0; i < str.length; i++) { /* 讀取字元 */
-                const char = str[i];
-                const nextChar = str[i+1]; /* 用來判斷引號的下一個字元 */
-                /* 處理連續兩個雙引號 "" → 實際代表一個 " */
-                if (char === '"' && inQuotes && nextChar === '"') {
-                    cell += '"';  /* 將 " 放進cell中 */
-                    i++; /* 跳過下一個字元，避免重複計算 */
-                /* 碰到雙引號時，切換是否進入引號區塊 */
-                } else if (char === '"') {
-                    inQuotes = !inQuotes;
-                /* 碰到逗號且不在引號中（inQuotes=false），代表一格結束 */
-                } else if (char === ',' && !inQuotes) {
-                    row.push(cell);
-                    cell = '';
-                /* 碰到換行且不在引號中，代表一列結束 */                
-                } else if (char === '\n' && !inQuotes) {
-                    row.push(cell); /* 加入最後一格 */
-                    rows.push(row); /* 存進 rows 陣列 */
-                    row = []; /* 重置暫存列 */
-                    cell = '';  /* 重置儲存格 */
-                /* 其他一般文字，直接加入目前儲存格 */
-                } else {
-                    cell += char;
-                }
-            }
-            /* 處理最後一列(檔案結尾可能沒有換行符號) */
-            if (cell || row.length > 0) {
-                row.push(cell);
-                rows.push(row);
-            }
-            return rows;
-        }
-        /* 
-        函式名稱: loadSheet
-        功能: 依據選擇的分頁 index，載入對應的 Google Sheets 資料
-        過程:
-        1. 切換按鈕樣式 (active)
-        2. 產生對應的 Google Sheets CSV 下載網址
-        3. 使用 fetch() 抓取資料
-        4. 使用 parseCSV() 將文字轉換為陣列
-        5. 生成表格 HTML 並插入網頁
-        */
         function loadSheet(index) {
-            /* 更改button的active狀態，先移除後加入 */
+            // 切換 active 樣式
             document.querySelectorAll("#sheetButtons button").forEach(btn => btn.classList.remove("active"));
             document.querySelectorAll("#sheetButtons button")[index].classList.add("active");
-            /* 取得要讀取的分頁名稱 (由 sheets 陣列提供) */
-            const sheetName = sheets[index].name;
-            const sheetUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
-        /* fetch函式用途為送出request，並回傳promise物件 */
-        fetch(sheetUrl)
-            .then(response => response.text())  /* 將回應轉成純文字格式 */
-            .then(data => {
-                const rows = parseCSV(data);
-                /* 設定表格欄位數 maxCols = 取第一列有效欄位數(非空白欄位) */
-                let maxCols = 0;
-                if (rows.length > 0) {
-                    maxCols = rows[0].filter(cell => cell.trim() !== "").length;
-                }
 
-                /* 生成表格 html */
-                let html = "";
-                rows.forEach((cols, index) => {
-                    /* 如果某列欄位數超過 maxCols，裁切多餘欄位 */
-                    if (cols.length > maxCols) {
-                        cols = cols.slice(0, maxCols);
+            // 本地 JSON 檔案路徑
+            const jsonFile = sheets[index].name;
+
+            fetch(jsonFile)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        document.getElementById("tokyo-data-table").innerHTML = "<tr><td>無資料</td></tr>";
+                        return;
                     }
-                    /* 如果欄位數不足，補空白欄位以對齊表格 */
-                    while (cols.length < maxCols) cols.push("");
-                    /* 生成表格列 <tr> */
-                    html += "<tr>";
-                    /* 生成每個儲存格，第一列使用 <th> (表頭)，其他列使用 <td> */
-                    cols.forEach(col => {
-                        /* /\r?\n/g為正則表達式，/.../g表示全域搜尋取代，\r?\n為換行符號 */
-                        let cell = col.replace(/\r?\n/g, "<br>"); /* 換行符號轉成 <br> */
-                        html += (index === 0)
-                            ? `<th>${cell}</th>`
-                            : `<td>${cell}</td>`;
+                    // 取得欄位標題
+                    const headers = Object.keys(data[0]);
+
+                    // 建立表格 HTML
+                    let html = "<tr>";
+                    headers.forEach(h => html += `<th>${h}</th>`);
+                    html += "</tr>";
+
+                    data.forEach(row => {
+                        html += "<tr>" + headers.map(h => {
+                            let cell = (row[h] || "").replace(/\n/g, "<br>");
+                            return `<td>${cell}</td>`;
+                        }).join('') + "</tr>";
                     });
-                    html += "</tr>"; /* 結束一列 */
-                });
-                /* 將產生好的表格 HTML 放入"tokyo-data-table"中 */
-                document.getElementById("tokyo-data-table").innerHTML = html;
-            })
-            /* 若讀取失敗，輸出錯誤訊息 */
-            .catch(error => console.error("讀取失敗:", error));
+
+                    document.getElementById("tokyo-data-table").innerHTML = html;
+                })
+                .catch(error => console.error("讀取 JSON 失敗:", error));
         }
+
+
 
         /* 搜尋功能 */
         function filterTable() {
